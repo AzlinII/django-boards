@@ -30,7 +30,7 @@ class PasswordResetTests(TestCase):
         The view must contain two inputs: csrf and email
         """
         self.assertContains(self.response, '<input', 2)
-        self.assertContains(self.response, '<type="email"', 1)
+        self.assertContains(self.response, 'type="email"', 1)
 
 
 class SuccessfulPasswordResetTests(TestCase):
