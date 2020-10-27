@@ -20,6 +20,8 @@ from django.contrib.auth import views as auth_view
 from accounts import views as account_views
 from boards import views as board_views
 
+# admin page can be reached by going to /admin
+# login is zwillinge + testpasswordforloggingin
 urlpatterns = [
     path('', board_views.home, name='home'),
     path('admin/', admin.site.urls),
@@ -27,5 +29,17 @@ urlpatterns = [
     path('login/', auth_view.LoginView.as_view(template_name='login.html'), name='login'),
     path('logout/', auth_view.LogoutView.as_view(), name='logout'),
     path('boards/<int:board_id>/', board_views.board_topics, name='board_topics'),
-    path('boards/<int:board_id>/new/', board_views.new_topic, name='new_topic')
+    path('boards/<int:board_id>/new/', board_views.new_topic, name='new_topic'),
+    path('reset/', auth_view.PasswordResetView.as_view(
+        template_name='password_reset.html',
+        email_template_name='password_reset_email.html',
+        subject_template_name='password_reset_subject.txt'
+    ), name='password_reset'),
+    path('reset/done/', auth_view.PasswordResetDoneView.as_view(template_name='password_reset_done.html'),
+         name='password_reset_done'),
+    path('reset/<slug:uidb64>/<slug:token>/',
+         auth_view.PasswordResetConfirmView.as_view(template_name='password_reset_confirm.html'),
+         name='password_reset_confirm'),
+    path('reset/complete/', auth_view.PasswordResetCompleteView.as_view(template_name='password_reset_complete.html'),
+         name='password_reset_complete'),
 ]

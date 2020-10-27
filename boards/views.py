@@ -1,10 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.models import User
-from .models import Board, Topic, Post
+from .models import Board, Post
 from .forms import NewTopicForm
 
-# admin page can be reached by going to /admin
-# login is zwillinge + testpasswordforloggingin
 
 # Create your views here.
 def home(request):
