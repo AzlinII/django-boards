@@ -36,18 +36,17 @@ def new_topic(request, board_id):
     :return:
     """
     board = get_object_or_404(Board, id=board_id)
-    user = User.objects.first()  # TODO: get the currently logged in user
     if request.method == 'POST':
         form = NewTopicForm(request.POST)
         if form.is_valid():
             topic = form.save(commit=False)
             topic.board = board
-            topic.starter = user
+            topic.starter = request.user
             topic.save()
-            post = Post.objects.create(
+            Post.objects.create(
                 message=form.cleaned_data.get('message'),
                 topic=topic,
-                created_by=user
+                created_by=request.user
             )
             return redirect('board_topics', board_id=board.id)  # TODO: redirect to the created topic page
     else:
