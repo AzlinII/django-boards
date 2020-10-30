@@ -6,13 +6,15 @@ from ..views import new_topic
 from ..models import Topic, Post
 from ..forms import NewTopicForm
 
-class NewTopicTest(TestCase):
+
+class NewTopicTests(TestCase):
 
     def setUp(self):
         TestHelper.create_board()
-        self.url = reverse('new_topic', kwargs={'board_id': 1})
-        self.response = self.client.get(self.url)
         User.objects.create_user(username='test', email='test@test.com', password='123')
+        self.url = reverse('new_topic', kwargs={'board_id': 1})
+        self.client.login(username='test', password='123')
+        self.response = self.client.get(self.url)
 
     def test_view_status_code_200(self):
         self.assertEquals(self.response.status_code, 200)
@@ -43,20 +45,20 @@ class NewTopicTest(TestCase):
         self.assertTrue(Post.objects.exists())
 
     def test_invalid_post(self):
-        '''
+        """
         Invalid post data should not redirect
         The expected behavior is to show the form again with validation errors
-        '''
+        """
         response = self.client.post(self.url, {})
         form = response.context.get('form')
         self.assertEquals(response.status_code, 200)
         self.assertTrue(form.errors)
 
     def test_invalid_post_empty_values(self):
-        '''
+        """
         Invalid post data should not redirect
         The expected behavior is to show the form again with validation errors
-        '''
+        """
         data = {
             'subject': '',
             'message': ''
@@ -70,3 +72,13 @@ class NewTopicTest(TestCase):
         form = self.response.context.get('form')
         self.assertIsInstance(form, NewTopicForm)
 
+
+class NotLoggedInNewTopicTests(TestCase):
+    def setUp(self):
+        TestHelper.create_board()
+        self.url = reverse('new_topic', kwargs={'board_id': 1})
+        self.response = self.client.get(self.url)
+
+    def test_redirection(self):
+        login_url = reverse('login')
+        self.assertRedirects(self.response, '{login_url}?next={url}'.format(login_url=login_url, url=self.url))

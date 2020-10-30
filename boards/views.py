@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Board, Post
 from .forms import NewTopicForm
@@ -25,6 +26,8 @@ def board_topics(request, board_id):
     board = get_object_or_404(Board, id=board_id)
     return render(request, 'topics.html', {'board': board})
 
+
+@login_required
 def new_topic(request, board_id):
     """
     renders the new_topic view - '/board/{board_id}/new/'
