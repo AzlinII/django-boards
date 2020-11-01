@@ -11,8 +11,8 @@ class TestHelper(TestCase):
         return Board.objects.create(name='Test Board', description='Testing Board')
 
     @staticmethod
-    def create_user():
-        return User.objects.create_user(username='john', email='john@doe.com', password='123')
+    def create_user(username='john', password='123'):
+        return User.objects.create_user(username=username, email='john@doe.com', password=password)
 
     @staticmethod
     def create_topic(board, user):

@@ -1,8 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from .models import Board, Post, Topic
-from .forms import NewTopicForm
+from .forms import NewTopicForm, PostForm
 
 
 # Create your views here.
@@ -48,7 +47,7 @@ def new_topic(request, board_id):
                 topic=topic,
                 created_by=request.user
             )
-            return redirect('board_topics', board_id=board.id)  # TODO: redirect to the created topic page
+            return redirect('topic_posts', board_id=board_id, topic_id=topic.id)
     else:
         form = NewTopicForm()
     return render(request, 'new_topic.html', {'board': board, 'form': form})
@@ -57,3 +56,19 @@ def new_topic(request, board_id):
 def topic_posts(request, board_id, topic_id):
     topic = get_object_or_404(Topic, board_id=board_id, id=topic_id)
     return render(request, 'topic_posts.html', {'topic': topic})
+
+
+@login_required
+def reply_topic(request, board_id, topic_id):
+    topic = get_object_or_404(Topic, board_id=board_id, id=topic_id)
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.topic = topic
+            post.created_by = request.user
+            post.save()
+            return redirect('topic_posts', board_id=board_id, topic_id=topic_id)
+    else:
+        form = PostForm()
+    return render(request, 'reply_topic.html', {'topic': topic, 'form': form})
