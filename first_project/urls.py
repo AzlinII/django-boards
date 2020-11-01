@@ -30,6 +30,7 @@ urlpatterns = [
     path('logout/', auth_view.LogoutView.as_view(), name='logout'),
     path('boards/<int:board_id>/', board_views.board_topics, name='board_topics'),
     path('boards/<int:board_id>/new/', board_views.new_topic, name='new_topic'),
+    path('boards/<int:board_id>/topics/<int:topic_id>/', board_views.topic_posts, name='topic_posts'),
     path('reset/', auth_view.PasswordResetView.as_view(
         template_name='password_reset.html',
         email_template_name='password_reset_email.html',

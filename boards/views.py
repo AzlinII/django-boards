@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Board, Post
+from .models import Board, Post, Topic
 from .forms import NewTopicForm
 
 
@@ -54,3 +54,6 @@ def new_topic(request, board_id):
     return render(request, 'new_topic.html', {'board': board, 'form': form})
 
 
+def topic_posts(request, board_id, topic_id):
+    topic = get_object_or_404(Topic, board_id=board_id, id=topic_id)
+    return render(request, 'topic_posts.html', {'topic': topic})
