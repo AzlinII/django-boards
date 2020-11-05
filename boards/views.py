@@ -23,7 +23,8 @@ def board_topics(request, board_id):
     :return:
     """
     board = get_object_or_404(Board, id=board_id)
-    return render(request, 'topics.html', {'board': board})
+    topics = board.get_topics_with_replies()
+    return render(request, 'topics.html', {'board': board, 'topics': topics})
 
 
 @login_required
@@ -55,6 +56,8 @@ def new_topic(request, board_id):
 
 def topic_posts(request, board_id, topic_id):
     topic = get_object_or_404(Topic, board_id=board_id, id=topic_id)
+    topic.views += 1
+    topic.save()
     return render(request, 'topic_posts.html', {'topic': topic})
 
 
